@@ -60,15 +60,10 @@ public class DecisionService {
             return decision;
         }
 
-        for (int period = startPeriod + 1; period <= MAX_PERIOD; period++) {
-            decision = tryPeriod(creditModifier, period);
-
-            if (decision.approved()) {
-                return decision;
-            }
-        }
-
-        return reject();
+        return findDecisionInLongerPeriods(
+                creditModifier,
+                startPeriod
+        );
     }
 
     private DecisionResult tryPeriod(int creditModifier, int period) {
@@ -81,17 +76,28 @@ public class DecisionService {
         return reject();
     }
 
-    private int findMaxApprovedAmountForPeriod(int creditModifier, int period) {
-        int bestAmount = 0;
+    private DecisionResult findDecisionInLongerPeriods(int creditModifier, int startPeriod) {
+        for (int period = startPeriod + 1; period <= MAX_PERIOD; period++) {
 
-        for (int amount = MIN_AMOUNT; amount <= MAX_AMOUNT; amount += AMOUNT_STEP) {
+            DecisionResult decision = tryPeriod(creditModifier, period);
 
-            if (isApproved(creditModifier, amount, period)) {
-                bestAmount = amount;
+            if (decision.approved()) {
+                return decision;
             }
         }
 
-        return bestAmount;
+        return reject();
+    }
+
+    private int findMaxApprovedAmountForPeriod(int creditModifier, int period) {
+        for (int amount = MAX_AMOUNT; amount >= MIN_AMOUNT; amount -= AMOUNT_STEP) {
+
+            if (isApproved(creditModifier, amount, period)) {
+                return amount;
+            }
+        }
+
+        return 0;
     }
 
     // think about parameters passing, maybe wrap in an object?
