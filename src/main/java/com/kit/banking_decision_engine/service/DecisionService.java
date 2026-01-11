@@ -19,7 +19,6 @@ public class DecisionService {
     private final CreditProfileRepository creditProfileRepository;
 
     public DecisionResult evaluate(DecisionRequest request) {
-        // think about processing exception
         CreditProfile profile = loadCreditProfile(request.personalCode());
         int creditModifier = profile.getSegment().getCreditModifier();
 
