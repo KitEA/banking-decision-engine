@@ -56,11 +56,11 @@ class DecisionServiceTest {
     @Test
     void shouldIncreasePeriodIfNeeded() {
         // given
-        givenProfile("49002010987", 300);
+        givenProfile("49002010976", 100);
 
         // when
         DecisionResult result = decisionService.evaluate(
-                new DecisionRequest("49002010987", 1000, 12)
+                new DecisionRequest("49002010976", 1000, 12)
         );
 
         // then
@@ -69,7 +69,7 @@ class DecisionServiceTest {
     }
 
     @Test
-    void enforcesMinimumPeriod() {
+    void shouldEnforcesMinimumPeriod() {
         // give
         givenProfile("49002010998", 1000);
 
@@ -84,9 +84,11 @@ class DecisionServiceTest {
 
     @Test
     void shouldThrowAnExceptionWhenPersonalCodeIsUnknown() {
+        // give/when
         when(creditProfileRepository.findById("49002010953"))
                 .thenReturn(Optional.empty());
 
+        //then
         assertThatThrownBy(() ->
                 decisionService.evaluate(
                         new DecisionRequest("49002010953", 4000, 24)
@@ -98,8 +100,10 @@ class DecisionServiceTest {
 
     @Test
     void throwsExceptionWhenLoanPeriodExceedsMaximum() {
+        // give/when
         givenProfile("49002010998", 1000);
 
+        // then
         assertThatThrownBy(() ->
                 decisionService.evaluate(
                         new DecisionRequest("49002010998", 4000, 72)
@@ -109,7 +113,6 @@ class DecisionServiceTest {
                 .hasMessage("Loan period exceeds maximum");
     }
 
-    // why code seg for all???
     private void givenProfile(String code, int creditModifier) {
         Segment segment = new Segment(1L, "SEG", creditModifier);
         CreditProfile profile = new CreditProfile(code, segment);
