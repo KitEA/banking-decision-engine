@@ -69,7 +69,7 @@ class DecisionServiceTest {
     }
 
     @Test
-    void shouldEnforcesMinimumPeriod() {
+    void shouldEnforceMinimumPeriod() {
         // give
         givenProfile("49002010998", 1000);
 
@@ -99,7 +99,7 @@ class DecisionServiceTest {
     }
 
     @Test
-    void throwsExceptionWhenLoanPeriodExceedsMaximum() {
+    void shouldThrowAnExceptionWhenLoanPeriodExceedsMaximum() {
         // give/when
         givenProfile("49002010998", 1000);
 
