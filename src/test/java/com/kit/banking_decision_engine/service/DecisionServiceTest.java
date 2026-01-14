@@ -5,24 +5,23 @@ import com.kit.banking_decision_engine.dto.DecisionResult;
 import com.kit.banking_decision_engine.model.CreditProfile;
 import com.kit.banking_decision_engine.model.Segment;
 import com.kit.banking_decision_engine.model.repository.CreditProfileRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class DecisionServiceTest {
+    @Mock
     private CreditProfileRepository creditProfileRepository;
-    private DecisionService decisionService;
 
-    @BeforeEach
-    void setUp() {
-        creditProfileRepository = mock(CreditProfileRepository.class);
-        decisionService = new DecisionService(creditProfileRepository);
-    }
+    @InjectMocks
+    private DecisionService decisionService;
 
     @Test
     void shouldRejectPersonWithDebt() {
