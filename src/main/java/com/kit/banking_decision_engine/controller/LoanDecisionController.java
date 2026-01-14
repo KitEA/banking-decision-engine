@@ -4,6 +4,7 @@ import com.kit.banking_decision_engine.dto.DecisionRequest;
 import com.kit.banking_decision_engine.dto.DecisionResponse;
 import com.kit.banking_decision_engine.dto.DecisionResult;
 import com.kit.banking_decision_engine.service.DecisionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +19,7 @@ public class LoanDecisionController {
     private final DecisionService decisionEngineService;
 
     @PostMapping
-    public DecisionResponse decide(@RequestBody DecisionRequest request) {
+    public DecisionResponse decide(@Valid @RequestBody DecisionRequest request) {
         DecisionResult result = decisionEngineService.evaluate(request);
 
         return new DecisionResponse(
