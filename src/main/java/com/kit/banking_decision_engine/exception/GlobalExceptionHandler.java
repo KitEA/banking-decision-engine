@@ -28,14 +28,23 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler(UnknownValueException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIllegalArgument(
-            IllegalArgumentException ex
+    public ErrorResponse handleUnknownArgument(
+            UnknownValueException ex
     ) {
         return new ErrorResponse(
-                "INVALID_REQUEST",
+                "UNKNOWN_VALUE",
                 ex.getMessage()
+        );
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleUnexpectedException(Exception ex) {
+        return new ErrorResponse(
+                "INTERNAL_SERVER_ERROR",
+                "An unexpected error occurred. Please try again later."
         );
     }
 }

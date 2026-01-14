@@ -2,6 +2,7 @@ package com.kit.banking_decision_engine.service;
 
 import com.kit.banking_decision_engine.dto.DecisionRequest;
 import com.kit.banking_decision_engine.dto.DecisionResult;
+import com.kit.banking_decision_engine.exception.UnknownValueException;
 import com.kit.banking_decision_engine.model.CreditProfile;
 import com.kit.banking_decision_engine.model.repository.CreditProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 public class DecisionService {
     private static final int MIN_AMOUNT = 2000;
     private static final int MAX_AMOUNT = 10000;
-    private static final int MIN_PERIOD = 12;
     private static final int MAX_PERIOD = 60;
     private static final int AMOUNT_STEP = 500;
 
@@ -26,15 +26,13 @@ public class DecisionService {
             return reject();
         }
 
-        int startPeriod = normalizePeriod(request.loanPeriod());
-
-        return findDecision(creditModifier, startPeriod);
+        return findDecision(creditModifier, request.loanPeriod());
     }
 
     private CreditProfile loadCreditProfile(String personalCode) {
         return creditProfileRepository
                 .findById(personalCode)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown personal code"));
+                .orElseThrow(() -> new UnknownValueException("Unknown personal code"));
     }
 
     private static boolean hasDebt(int creditModifier) {
@@ -43,14 +41,6 @@ public class DecisionService {
 
     private static DecisionResult reject() {
         return new DecisionResult(false, 0, 0);
-    }
-
-    private int normalizePeriod(int requestedPeriod) {
-        if (requestedPeriod > MAX_PERIOD) {
-            throw new IllegalArgumentException("Loan period exceeds maximum");
-        }
-
-        return Math.max(requestedPeriod, MIN_PERIOD);
     }
 
     private DecisionResult findDecision(int creditModifier, int startPeriod) {
