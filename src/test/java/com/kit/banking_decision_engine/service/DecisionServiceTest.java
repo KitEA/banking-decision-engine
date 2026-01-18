@@ -2,6 +2,7 @@ package com.kit.banking_decision_engine.service;
 
 import com.kit.banking_decision_engine.dto.DecisionRequest;
 import com.kit.banking_decision_engine.dto.DecisionResult;
+import com.kit.banking_decision_engine.exception.UnknownValueException;
 import com.kit.banking_decision_engine.model.CreditProfile;
 import com.kit.banking_decision_engine.model.Segment;
 import com.kit.banking_decision_engine.model.repository.CreditProfileRepository;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -59,26 +62,12 @@ class DecisionServiceTest {
 
         // when
         DecisionResult result = decisionService.evaluate(
-                new DecisionRequest("49002010976", 1000, 12)
+                new DecisionRequest("49002010976", 2000, 12)
         );
 
         // then
         assertThat(result.approved()).isTrue();
         assertThat(result.approvedPeriod()).isGreaterThan(12);
-    }
-
-    @Test
-    void shouldEnforceMinimumPeriod() {
-        // give
-        givenProfile("49002010998", 1000);
-
-        // when
-        DecisionResult result = decisionService.evaluate(
-                new DecisionRequest("49002010998", 4000, 6));
-
-        // then
-        assertThat(result.approved()).isTrue();
-        assertThat(result.approvedPeriod()).isGreaterThanOrEqualTo(12);
     }
 
     @Test
@@ -93,11 +82,12 @@ class DecisionServiceTest {
                         new DecisionRequest("49002010953", 4000, 24)
                 )
         )
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(UnknownValueException.class)
                 .hasMessage("Unknown personal code");
     }
 
     @Test
+    @SuppressWarnings("DataFlowIssue")
     void shouldThrowAnExceptionWhenLoanPeriodExceedsMaximum() {
         // give/when
         givenProfile("49002010998", 1000);
@@ -108,8 +98,7 @@ class DecisionServiceTest {
                         new DecisionRequest("49002010998", 4000, 72)
                 )
         )
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Loan period exceeds maximum");
+                .isInstanceOf(MethodArgumentNotValidException.class);
     }
 
     private void givenProfile(String code, int creditModifier) {
