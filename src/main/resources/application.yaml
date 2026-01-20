@@ -4,3 +4,17 @@ spring:
       ddl-auto: validate
   application:
     name: banking-decision-engine
+logging:
+  level:
+    org.zalando.logbook: TRACE
+
+logbook:
+  format:
+    style: http
+  obfuscate:
+    headers:
+      - Authorization
+      - Cookie
+      - Set-Cookie
+  filter:
+    enabled: true

@@ -8,10 +8,6 @@ group = "com.kit"
 version = "0.0.1-SNAPSHOT"
 description = "Demo project for Spring Boot"
 
-val mockitoAgent by configurations.creating {
-	isTransitive = false
-}
-
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(25)
@@ -33,6 +29,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
+	implementation("org.zalando:logbook-spring-boot-starter:4.0.0-RC.1")
 	implementation("org.flywaydb:flyway-database-postgresql")
 
 	runtimeOnly("org.postgresql:postgresql")
