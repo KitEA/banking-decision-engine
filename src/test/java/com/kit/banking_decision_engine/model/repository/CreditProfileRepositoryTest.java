@@ -1,25 +1,18 @@
 package com.kit.banking_decision_engine.model.repository;
 
+import com.kit.banking_decision_engine.config.TestContainerConfig;
 import com.kit.banking_decision_engine.model.CreditProfile;
 import com.kit.banking_decision_engine.model.Segment;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.context.ImportTestcontainers;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.postgresql.PostgreSQLContainer;
+import org.springframework.context.annotation.Import;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@ImportTestcontainers
+@Import(TestContainerConfig.class)
 class CreditProfileRepositoryTest {
-
-    @Container
-    @ServiceConnection
-    static PostgreSQLContainer postgres =
-            new PostgreSQLContainer("postgres:16-alpine");
 
     @Autowired
     private CreditProfileRepository credRep;
